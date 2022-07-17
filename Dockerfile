@@ -33,7 +33,7 @@ RUN if [ "${PARTKEEPR_INSTALL_SRC}" == "git" ]; then \
     && composer self-update 1.4.1 \
     && git clone ${REPO} . \
     && cp app/config/parameters.php.dist app/config/parameters.php \
-    && composer install
+    && composer install \
     ; \
     else \
     cd /var/www/html \
