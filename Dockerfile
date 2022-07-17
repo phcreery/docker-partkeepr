@@ -29,15 +29,15 @@ RUN set -ex \
     && docker-php-ext-enable apcu \
     \
     && if [ "${PARTKEEPR_INSTALL_SRC}" == "git" ]; then \
-    cd /var/www/html \
-    && composer self-update 1.4.1 \
-    && git clone ${REPO} . \
-    && cp app/config/parameters.php.dist app/config/parameters.php \
-    && composer install \
+        cd /var/www/html \
+        && composer self-update 1.4.1 \
+        && git clone ${REPO} . \
+        && cp app/config/parameters.php.dist app/config/parameters.php \
+        && composer install \
     ; else \
-    cd /var/www/html \
-    && curl -sL https://downloads.partkeepr.org/partkeepr-${PARTKEEPR_VERSION}.tbz2 \
-        |bsdtar --strip-components=1 -xvf- \
+        cd /var/www/html \
+        && curl -sL https://downloads.partkeepr.org/partkeepr-${PARTKEEPR_VERSION}.tbz2 \
+            |bsdtar --strip-components=1 -xvf- \
     ; fi \
     \
     && ls -la /var/www/html/ \
@@ -45,11 +45,12 @@ RUN set -ex \
     && a2enmod rewrite \
     \ 
     && if [[ -z "${PARTKEEPR_BASE_URL}" ]]; then \
-    rm -f /var/www/html/app/config/config_custom.yml \
+        printf "framework: \n    assets: \n        base_urls: \n            - http://localhost' \n" \
+        > /var/www/html/app/config/config_custom.yml \
     ; else \
-    printf "framework: \n    assets: \n        base_urls: \n            - '%s' \n" \
-    ${PARTKEEPR_BASE_URL} > /var/www/html/app/config/config_custom.yml \
-    ; fi \
+        printf "framework: \n    assets: \n        base_urls: \n            - '%s' \n" \
+        ${PARTKEEPR_BASE_URL} > /var/www/html/app/config/config_custom.yml \
+    ; fi
 
 COPY crontab /etc/cron.d/partkeepr
 COPY info.php /var/www/html/web/info.php
