@@ -1,6 +1,5 @@
 version: "3"
 services:
-
   database:
     image: mariadb:10.0
     restart: on-failure
@@ -56,10 +55,13 @@ services:
       - PARTKEEPR_MAINTENANCE_MESSAGE
       - PARTKEEPR_MAINTENANCE_TITLE
       - PARTKEEPR_OCTOPART_APIKEY
+      - PARTKEEPR_OCTOPART_LIMIT
       - PARTKEEPR_PARTS_INTERNALPARTNUMBERUNIQUE
       - PARTKEEPR_PARTS_LIMIT
       - PARTKEEPR_USERS_LIMIT
       - PARTKEEPR_SECRET
+      - PARTKEEPR_AUTHENTICATION_PROVIDER
+      - PARTKEEPR_BASE_URL
     ports:
       - "8080:80"
     volumes:
