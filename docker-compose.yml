@@ -12,7 +12,8 @@ services:
       - mysql-data:/var/lib/mysql
 
   partkeepr:
-    image: mhubig/partkeepr:latest
+    # image: mhubig/partkeepr:latest
+    build: .
     restart: on-failure
     environment:
       - PARTKEEPR_DATABASE_HOST
@@ -72,7 +73,8 @@ services:
       - database
 
   cronjob:
-    image: mhubig/partkeepr:latest
+    # image: mhubig/partkeepr:latest
+    build: .
     restart: on-failure
     entrypoint: []
     command: bash -c "crontab /etc/cron.d/partkeepr && cron -f"
