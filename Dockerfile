@@ -1,11 +1,10 @@
-# FROM php:7.1-apache
 FROM chialab/php:7.1-apache
 LABEL maintainer="Markus Hubig <mhubig@gmail.com>"
-# LABEL version="1.4.0-20"
-LABEL version="git"
-ENV REPO https://github.com/partkeepr/partkeepr.git
+LABEL version="1.4.0-20"
 
+ENV REPO https://github.com/partkeepr/partkeepr.git
 ENV PARTKEEPR_VERSION 1.4.0
+ENV PARTKEEPR_INSTALL_SRC git
 
 RUN set -ex \
     && apt-get update && apt-get install -y \
@@ -27,16 +26,23 @@ RUN set -ex \
     # && docker-php-ext-install -j$(nproc) curl ldap bcmath gd dom intl opcache pdo pdo_mysql \
     \
     && pecl install apcu_bc-beta \
-    && docker-php-ext-enable apcu \ 
-    \
-    && cd /var/www/html \
+    && docker-php-ext-enable apcu
+
+RUN if [ "${PARTKEEPR_INSTALL_SRC}" == "git" ]; then \
+    cd /var/www/html \
     && composer self-update 1.4.1 \
     && git clone ${REPO} . \
     && cp app/config/parameters.php.dist app/config/parameters.php \
-    && composer install \
-    && ls -la /var/www/html/ \
+    && composer install
+    ; \
+    else \
+    cd /var/www/html \
+    && curl -sL https://downloads.partkeepr.org/partkeepr-${PARTKEEPR_VERSION}.tbz2 \
+        |bsdtar --strip-components=1 -xvf- \
+    ; fi
+
+RUN ls -la /var/www/html/ \
     && chown -R www-data:www-data /var/www/html \
-    \
     && a2enmod rewrite
 
 COPY crontab /etc/cron.d/partkeepr
@@ -44,8 +50,10 @@ COPY info.php /var/www/html/web/info.php
 COPY php.ini /usr/local/etc/php/php.ini
 COPY apache.conf /etc/apache2/sites-available/000-default.conf
 COPY docker-php-entrypoint mkparameters parameters.template /usr/local/bin/
-RUN if [[ -z "${PARTKEEPR_BASE_URL}" ]]; then echo 'nope'; \
-    else printf "framework: \n    assets: \n        base_urls: \n            - '%s' \n" \
+RUN if [[ -z "${PARTKEEPR_BASE_URL}" ]]; then \
+    echo 'nope'; \
+    else \
+    printf "framework: \n    assets: \n        base_urls: \n            - '%s' \n" \
     ${PARTKEEPR_BASE_URL} > /var/www/html/app/config/config_custom.yml ; fi
 
 VOLUME ["/var/www/html/data", "/var/www/html/web"]

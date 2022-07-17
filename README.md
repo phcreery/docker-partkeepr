@@ -32,6 +32,13 @@ The default database parameters are:
 
 <img src="https://raw.githubusercontent.com/mhubig/docker-partkeepr/master/setupdb.png" width="500">
 
+
+To stop and remove all associated containers:
+```shell
+docker-compose down
+```
+
+
 ## How to manually build & run the docker image
 
 ```shell
