@@ -20,7 +20,6 @@ RUN set -ex \
         cron \
         git \
         wget \
-        phing \
         nano \
     --no-install-recommends && rm -r /var/lib/apt/lists/* \
     \
