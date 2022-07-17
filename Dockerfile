@@ -1,6 +1,8 @@
 FROM php:7.1-apache
 LABEL maintainer="Markus Hubig <mhubig@gmail.com>"
-LABEL version="1.4.0-20"
+# LABEL version="1.4.0-20"
+LABEL version="git"
+ENV REPO https://github.com/partkeepr/partkeepr.git
 
 ENV PARTKEEPR_VERSION 1.4.0
 
@@ -15,6 +17,8 @@ RUN set -ex \
         libpng-dev \
         libldap2-dev \
         cron \
+        git \
+        wget \
     --no-install-recommends && rm -r /var/lib/apt/lists/* \
     \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
@@ -22,11 +26,16 @@ RUN set -ex \
     && docker-php-ext-install -j$(nproc) curl ldap bcmath gd dom intl opcache pdo pdo_mysql \
     \
     && pecl install apcu_bc-beta \
-    && docker-php-ext-enable apcu \
-    \
-    && cd /var/www/html \
-    && curl -sL https://downloads.partkeepr.org/partkeepr-${PARTKEEPR_VERSION}.tbz2 \
-        |bsdtar --strip-components=1 -xvf- \
+    && docker-php-ext-enable apcu
+
+COPY install-composer.sh /
+RUN cd / && ./install-composer.sh
+
+RUN cd /var/www/html \
+    && git clone ${REPO} . \
+    && cp app/config/parameters.php.dist app/config/parameters.php \
+    && php /composer.phar config --global github-protocols https \
+    && php -d memory_limit=-1 /composer.phar install \
     && chown -R www-data:www-data /var/www/html \
     \
     && a2enmod rewrite
