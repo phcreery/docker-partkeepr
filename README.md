@@ -1,4 +1,4 @@
-# partkeepr docker image
+# PartKeepr Docker image
 
 This is the source repository for the trusted builds of the [`mhubig/partkeepr`][0]
 docker image releases. For more information on PartKeepr check out the [website][1].
@@ -9,17 +9,20 @@ To use it, you need to have a working [docker][2] installation. Start by cloning
 repo and running the following commands:
 
 ```shell
-export PARTKEEPR_OCTOPART_APIKEY=0123456 # optional, get one here https://octopart.com
-docker-compose up # add -d to run in deamon mode
+export PARTKEEPR_BASE_URL=https://my.domain.com/url/ # optional, requires trailing slash if adding base url path
+export PARTKEEPR_OCTOPART_APIKEY=0123456 # optional, get one here: https://octopart.com
+docker-compose up # add -d to run in daemon mode
 ```
 
-This will start PartKeepr and a preconfigured MariaDB database container.
+This will start PartKeepr and a pre-configured MariaDB database container.
 
-> To get a list of all supported PARTKEEPR_ environment variables go to the file
+> To get a list of all supported `PARTKEEPR_` environment variables go to the file
 > [`mkparameters`][3], starting at line 15.
 
-Now open the partkeepr setup page (e.g.: http://localhost:8080/setup) and follow the
-instructions. To get the generated authentication key execute the following command:
+Now open the PartKeepr setup page (e.g.: http://localhost:8080/setup) and follow the
+instructions. The setup will not be accessible from the external domain at `PARTKEEPR_BASE_URL`.
+You must use the internal IP/localhost along with the base url path for setup (http://localhost:8080/url/setup) See [PartKeepr_behind_a_reverse_proxy](https://wiki.partkeepr.org/wiki/KB00008:PartKeepr_behind_a_reverse_proxy)
+To get the generated authentication key execute the following command:
 
 ```shell
 docker-compose exec partkeepr cat app/authkey.php
@@ -49,7 +52,7 @@ git push && git push --tags
 ## Docker Image CI/CD Pipeline
 
 This git repo is connected to a build Pipeline at https://hub.docker.com. A new
-Image is build for every Tag pushed to this repo. The images are taged with a
+Image is build for every Tag pushed to this repo. The images are tagged with a
 version number (e.g. `1.4.0-20`) and `latest`.
 
 [0]: https://hub.docker.com/r/mhubig/partkeepr/

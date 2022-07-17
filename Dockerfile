@@ -20,7 +20,6 @@ RUN set -ex \
         cron \
         git \
         wget \
-        nano \
     --no-install-recommends && rm -r /var/lib/apt/lists/* \
     \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
@@ -28,7 +27,7 @@ RUN set -ex \
     # && docker-php-ext-install -j$(nproc) curl ldap bcmath gd dom intl opcache pdo pdo_mysql \
     \
     && pecl install apcu_bc-beta \
-    && docker-php-ext-enable apcu\ 
+    && docker-php-ext-enable apcu \ 
     \
     && cd /var/www/html \
     && composer self-update 1.4.1 \
@@ -45,6 +44,9 @@ COPY info.php /var/www/html/web/info.php
 COPY php.ini /usr/local/etc/php/php.ini
 COPY apache.conf /etc/apache2/sites-available/000-default.conf
 COPY docker-php-entrypoint mkparameters parameters.template /usr/local/bin/
+RUN if [[ -z "${PARTKEEPR_BASE_URL}" ]]; then echo 'nope'; \
+    else printf "framework: \n    assets: \n        base_urls: \n            - '%s' \n" \
+    ${PARTKEEPR_BASE_URL} > /var/www/html/app/config/config_custom.yml ; fi
 
 VOLUME ["/var/www/html/data", "/var/www/html/web"]
 
