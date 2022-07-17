@@ -59,5 +59,5 @@ COPY docker-php-entrypoint mkparameters parameters.template /usr/local/bin/
 
 VOLUME ["/var/www/html/data", "/var/www/html/web"]
 
-ENTRYPOINT ['docker-php-entrypoint']
-CMD ['apache2-foreground']
+ENTRYPOINT ["docker-php-entrypoint"]
+CMD ["apache2-foreground"]
