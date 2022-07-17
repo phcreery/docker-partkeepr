@@ -45,16 +45,18 @@ RUN ls -la /var/www/html/ \
     && chown -R www-data:www-data /var/www/html \
     && a2enmod rewrite
 
+RUN if [[ -z "${PARTKEEPR_BASE_URL}" ]]; then \
+    echo 'nope'; \
+    else \
+    printf "framework: \n    assets: \n        base_urls: \n            - '%s' \n" \
+    ${PARTKEEPR_BASE_URL} > /var/www/html/app/config/config_custom.yml \
+    ; fi
+
 COPY crontab /etc/cron.d/partkeepr
 COPY info.php /var/www/html/web/info.php
 COPY php.ini /usr/local/etc/php/php.ini
 COPY apache.conf /etc/apache2/sites-available/000-default.conf
 COPY docker-php-entrypoint mkparameters parameters.template /usr/local/bin/
-RUN if [[ -z "${PARTKEEPR_BASE_URL}" ]]; then \
-    echo 'nope'; \
-    else \
-    printf "framework: \n    assets: \n        base_urls: \n            - '%s' \n" \
-    ${PARTKEEPR_BASE_URL} > /var/www/html/app/config/config_custom.yml ; fi
 
 VOLUME ["/var/www/html/data", "/var/www/html/web"]
 
