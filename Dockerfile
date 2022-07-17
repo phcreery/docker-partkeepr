@@ -20,6 +20,7 @@ RUN set -ex \
         cron \
         git \
         wget \
+        phing \
     --no-install-recommends && rm -r /var/lib/apt/lists/* \
     \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
