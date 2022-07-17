@@ -39,18 +39,17 @@ RUN set -ex \
         && curl -sL https://downloads.partkeepr.org/partkeepr-${PARTKEEPR_VERSION}.tbz2 \
             |bsdtar --strip-components=1 -xvf- \
     ; fi \
-    \
-    && ls -la /var/www/html/ \
-    && chown -R www-data:www-data /var/www/html \
-    && a2enmod rewrite \
-    \ 
     && if [[ -z "${PARTKEEPR_BASE_URL}" ]]; then \
-        printf "framework: \n    assets: \n        base_urls: \n            - http://localhost' \n" \
+        printf "framework: \n    assets: \n        base_urls: \n            - 'http://localhost' \n" \
         > /var/www/html/app/config/config_custom.yml \
     ; else \
         printf "framework: \n    assets: \n        base_urls: \n            - '%s' \n" \
         ${PARTKEEPR_BASE_URL} > /var/www/html/app/config/config_custom.yml \
-    ; fi
+    ; fi \
+    \
+    && ls -la /var/www/html/ \
+    && chown -R www-data:www-data /var/www/html \
+    && a2enmod rewrite
 
 COPY crontab /etc/cron.d/partkeepr
 COPY info.php /var/www/html/web/info.php
@@ -60,5 +59,5 @@ COPY docker-php-entrypoint mkparameters parameters.template /usr/local/bin/
 
 VOLUME ["/var/www/html/data", "/var/www/html/web"]
 
-ENTRYPOINT ["docker-php-entrypoint"]
-CMD ["apache2-foreground"]
+ENTRYPOINT ['docker-php-entrypoint']
+CMD ['apache2-foreground']
