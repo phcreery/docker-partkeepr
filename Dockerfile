@@ -4,6 +4,7 @@ LABEL version="1.4.0-20"
 
 ENV REPO https://github.com/partkeepr/partkeepr.git
 ENV PARTKEEPR_VERSION 1.4.0
+ENV PARTKEEPR_INSTALL_SRC git
 
 SHELL ["/bin/bash", "-c"]
 
@@ -42,15 +43,15 @@ RUN set -ex \
             |bsdtar --strip-components=1 -xf- \
     ; fi \
     \
-    && if [[ -z "${PARTKEEPR_BASE_URL}" ]]; then \
-        printf "framework: \n    assets: \n        base_urls: \n            - 'http://localhost' \n" \
-        > /var/www/html/app/config/config_custom.yml \
-    ; else \
-        printf "framework: \n    assets: \n        base_urls: \n            - '%s' \n" \
-        ${PARTKEEPR_BASE_URL} > /var/www/html/app/config/config_custom.yml \
-    ; fi \
-    && cat /var/www/html/app/config/config_custom.yml \
-    \
+    # && if [[ -z "${PARTKEEPR_BASE_URL}" ]]; then \
+    #     printf "framework: \n    assets: \n        base_urls: \n            - 'http://localhost' \n" \
+    #     > /var/www/html/app/config/config_custom.yml \
+    # ; else \
+    #     printf "framework: \n    assets: \n        base_urls: \n            - '%s' \n" \
+    #     ${PARTKEEPR_BASE_URL} > /var/www/html/app/config/config_custom.yml \
+    # ; fi \
+    # && cat /var/www/html/app/config/config_custom.yml \
+    # \
     && ls -la /var/www/html/ \
     && chown -R www-data:www-data /var/www/html \
     && a2enmod rewrite

@@ -1,13 +1,23 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
 PARAMETERS_FILE='/var/www/html/app/config/parameters.php'
 
 mkparameters > $PARAMETERS_FILE
+
+echo $PARTKEEPR_BASE_URL
+if [[ -z "$PARTKEEPR_BASE_URL" ]]
+then
+	printf "framework: \n    assets: \n        base_urls: \n            - 'http://localhost' \n" > /var/www/html/app/config/config_custom.yml
+else
+	printf "framework: \n    assets: \n        base_urls: \n            - '%s' \n" $PARTKEEPR_BASE_URL > /var/www/html/app/config/config_custom.yml
+fi
+
+
 chown -R www-data:www-data /var/www/html/app
 chown -R www-data:www-data /var/www/html/web
 
-cat /var/www/html/app/config/config_custom.yml
+cat /var/www/html/app/config/config_custom.yml || true
 
 # first arg is `-f` or `--some-option`
 if [ "${1#-}" != "$1" ]; then
