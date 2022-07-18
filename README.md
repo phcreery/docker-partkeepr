@@ -5,11 +5,15 @@ docker image releases. For more information on PartKeepr check out the [website]
 
 > The most recent version is: 1.4.0-20
 
+(Optional) Add the following to the top of the dockerfile to use github repo for building
+```
+ENV PARTKEEPR_INSTALL_SRC git
+```
+
 To use it, you need to have a working [docker][2] installation. Start by cloning the
 repo and running the following commands:
 
 ```shell
-export PARTKEEPR_INSTALL_SRC=git # optional, if it = git, do a git pull of the repo, else, use the version defined in docker-compose file
 export PARTKEEPR_BASE_URL=http://my.domain.com/url/ # optional, requires trailing slash if adding base url path
 export PARTKEEPR_OCTOPART_APIKEY=0123456 # optional, get one here: https://octopart.com
 docker-compose up # add -d to run in daemon mode
