@@ -9,7 +9,8 @@ To use it, you need to have a working [docker][2] installation. Start by cloning
 repo and running the following commands:
 
 ```shell
-export PARTKEEPR_BASE_URL=https://my.domain.com/url/ # optional, requires trailing slash if adding base url path
+export PARTKEEPR_INSTALL_SRC=git # optional, if it = git, do a git pull of the repo, else, use the version defined in docker-compose file
+export PARTKEEPR_BASE_URL=http://my.domain.com/url/ # optional, requires trailing slash if adding base url path
 export PARTKEEPR_OCTOPART_APIKEY=0123456 # optional, get one here: https://octopart.com
 docker-compose up # add -d to run in daemon mode
 ```
@@ -31,12 +32,6 @@ docker-compose exec partkeepr cat app/authkey.php
 The default database parameters are:
 
 <img src="https://raw.githubusercontent.com/mhubig/docker-partkeepr/master/setupdb.png" width="500">
-
-
-To stop and remove all associated containers:
-```shell
-docker-compose down
-```
 
 
 ## How to manually build & run the docker image

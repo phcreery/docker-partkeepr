@@ -4,7 +4,8 @@ LABEL version="1.4.0-20"
 
 ENV REPO https://github.com/partkeepr/partkeepr.git
 ENV PARTKEEPR_VERSION 1.4.0
-ENV PARTKEEPR_INSTALL_SRC git
+
+SHELL ["/bin/bash", "-c"]
 
 RUN set -ex \
     && apt-get update && apt-get install -y \
@@ -28,7 +29,7 @@ RUN set -ex \
     && pecl install apcu_bc-beta \
     && docker-php-ext-enable apcu \
     \
-    && if [ "${PARTKEEPR_INSTALL_SRC}" == "git" ]; then \
+    && if [[ "${PARTKEEPR_INSTALL_SRC}" == "git" ]]; then \
         cd /var/www/html \
         && composer self-update 1.4.1 \
         && git clone ${REPO} . \
@@ -36,9 +37,11 @@ RUN set -ex \
         && composer install \
     ; else \
         cd /var/www/html \
+        && chown -R www-data:www-data /var/www/html \
         && curl -sL https://downloads.partkeepr.org/partkeepr-${PARTKEEPR_VERSION}.tbz2 \
-            |bsdtar --strip-components=1 -xvf- \
+            |bsdtar --strip-components=1 -xf- \
     ; fi \
+    \
     && if [[ -z "${PARTKEEPR_BASE_URL}" ]]; then \
         printf "framework: \n    assets: \n        base_urls: \n            - 'http://localhost' \n" \
         > /var/www/html/app/config/config_custom.yml \
@@ -46,6 +49,7 @@ RUN set -ex \
         printf "framework: \n    assets: \n        base_urls: \n            - '%s' \n" \
         ${PARTKEEPR_BASE_URL} > /var/www/html/app/config/config_custom.yml \
     ; fi \
+    && cat /var/www/html/app/config/config_custom.yml \
     \
     && ls -la /var/www/html/ \
     && chown -R www-data:www-data /var/www/html \

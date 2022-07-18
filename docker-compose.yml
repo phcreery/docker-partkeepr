@@ -63,6 +63,7 @@ services:
       - PARTKEEPR_SECRET
       - PARTKEEPR_AUTHENTICATION_PROVIDER
       - PARTKEEPR_BASE_URL
+      - PARTKEEPR_INSTALL_SRC
     ports:
       - "8080:80"
     volumes:
